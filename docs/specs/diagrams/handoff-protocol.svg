@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 480" font-family="'Segoe UI', system-ui, -apple-system, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 500" font-family="'Segoe UI', system-ui, -apple-system, sans-serif">
   <defs>
     <filter id="shadow">
       <feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity="0.1"/>
@@ -12,83 +12,89 @@
   </defs>
 
   <!-- Title -->
-  <text x="400" y="30" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">Handoff Protocol</text>
-  <text x="400" y="50" text-anchor="middle" font-size="12" fill="#64748b">How work moves between humans, AI agents, and external platforms</text>
+  <text x="410" y="30" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">Handoff Protocol</text>
+  <text x="410" y="50" text-anchor="middle" font-size="12" fill="#64748b">How work moves between humans, AI agents, and external platforms</text>
 
   <!-- Handoff triggers (left side) -->
-  <text x="40" y="90" font-size="14" font-weight="700" fill="#1e293b">Triggers</text>
+  <text x="40" y="85" font-size="14" font-weight="700" fill="#1e293b">Triggers</text>
 
-  <rect x="30" y="105" width="200" height="36" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="1" filter="url(#shadow)"/>
-  <text x="130" y="128" text-anchor="middle" font-size="11" font-weight="600" fill="#92400e">Capability Boundary</text>
+  <rect x="30" y="100" width="210" height="38" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="1" filter="url(#shadow)"/>
+  <text x="135" y="124" text-anchor="middle" font-size="11" font-weight="600" fill="#92400e">Capability Boundary</text>
 
-  <rect x="30" y="150" width="200" height="36" rx="8" fill="#fee2e2" stroke="#ef4444" stroke-width="1" filter="url(#shadow)"/>
-  <text x="130" y="173" text-anchor="middle" font-size="11" font-weight="600" fill="#991b1b">Confidence Drop (&lt;60%)</text>
+  <rect x="30" y="148" width="210" height="38" rx="8" fill="#fee2e2" stroke="#ef4444" stroke-width="1" filter="url(#shadow)"/>
+  <text x="135" y="172" text-anchor="middle" font-size="11" font-weight="600" fill="#991b1b">Confidence Drop (&lt;60%)</text>
 
-  <rect x="30" y="195" width="200" height="36" rx="8" fill="#ede9fe" stroke="#8b5cf6" stroke-width="1" filter="url(#shadow)"/>
-  <text x="130" y="218" text-anchor="middle" font-size="11" font-weight="600" fill="#5b21b6">Autonomy Gate</text>
+  <rect x="30" y="196" width="210" height="38" rx="8" fill="#ede9fe" stroke="#8b5cf6" stroke-width="1" filter="url(#shadow)"/>
+  <text x="135" y="220" text-anchor="middle" font-size="11" font-weight="600" fill="#5b21b6">Autonomy Gate</text>
 
-  <rect x="30" y="240" width="200" height="36" rx="8" fill="#dbeafe" stroke="#3b82f6" stroke-width="1" filter="url(#shadow)"/>
-  <text x="130" y="263" text-anchor="middle" font-size="11" font-weight="600" fill="#1e40af">Delegation Request</text>
+  <rect x="30" y="244" width="210" height="38" rx="8" fill="#dbeafe" stroke="#3b82f6" stroke-width="1" filter="url(#shadow)"/>
+  <text x="135" y="268" text-anchor="middle" font-size="11" font-weight="600" fill="#1e40af">Delegation Request</text>
 
-  <rect x="30" y="285" width="200" height="36" rx="8" fill="#dcfce7" stroke="#22c55e" stroke-width="1" filter="url(#shadow)"/>
-  <text x="130" y="308" text-anchor="middle" font-size="11" font-weight="600" fill="#166534">Platform Boundary</text>
+  <rect x="30" y="292" width="210" height="38" rx="8" fill="#dcfce7" stroke="#22c55e" stroke-width="1" filter="url(#shadow)"/>
+  <text x="135" y="316" text-anchor="middle" font-size="11" font-weight="600" fill="#166534">Platform Boundary</text>
 
   <!-- Handoff record (center) -->
-  <rect x="290" y="85" width="220" height="200" rx="12" fill="#fff" stroke="#e2e8f0" stroke-width="2" filter="url(#shadow)"/>
-  <text x="400" y="110" text-anchor="middle" font-size="13" font-weight="700" fill="#1e293b">Handoff Record</text>
-  <line x1="310" y1="120" x2="490" y2="120" stroke="#e2e8f0" stroke-width="1"/>
+  <rect x="300" y="80" width="230" height="260" rx="12" fill="#fff" stroke="#e2e8f0" stroke-width="2" filter="url(#shadow)"/>
+  <text x="415" y="106" text-anchor="middle" font-size="13" font-weight="700" fill="#1e293b">Handoff Record</text>
+  <line x1="318" y1="116" x2="512" y2="116" stroke="#e2e8f0" stroke-width="1"/>
 
-  <text x="310" y="142" font-size="11" fill="#64748b">from:</text>
-  <text x="380" y="142" font-size="11" font-weight="600" fill="#1e293b">AI Agent</text>
-  <text x="310" y="162" font-size="11" fill="#64748b">to:</text>
-  <text x="380" y="162" font-size="11" font-weight="600" fill="#1e293b">Human Provider</text>
-  <text x="310" y="182" font-size="11" fill="#64748b">reason:</text>
-  <text x="380" y="182" font-size="11" font-weight="600" fill="#b45309">capability_boundary</text>
-  <text x="310" y="202" font-size="11" fill="#64748b">context:</text>
-  <text x="380" y="202" font-size="11" font-weight="600" fill="#1e293b">{full history}</text>
-  <text x="310" y="222" font-size="11" fill="#64748b">lost:</text>
-  <text x="380" y="222" font-size="11" font-weight="600" fill="#dc2626">none</text>
-  <text x="310" y="245" font-size="11" fill="#64748b">chain:</text>
-  <text x="380" y="245" font-size="11" font-weight="600" fill="#3b82f6">[user→AI→provider]</text>
-  <text x="310" y="265" font-size="11" fill="#64748b">timestamp:</text>
-  <text x="380" y="265" font-size="11" font-weight="600" fill="#1e293b">2026-03-16T14:30Z</text>
+  <text x="318" y="140" font-size="11" fill="#64748b">from:</text>
+  <text x="400" y="140" font-size="11" font-weight="600" fill="#1e293b">AI Agent</text>
 
-  <!-- Arrows from triggers to record -->
-  <line x1="230" y1="123" x2="288" y2="160" stroke="#64748b" stroke-width="1" marker-end="url(#arrow)"/>
-  <line x1="230" y1="168" x2="288" y2="170" stroke="#64748b" stroke-width="1" marker-end="url(#arrow)"/>
-  <line x1="230" y1="213" x2="288" y2="190" stroke="#64748b" stroke-width="1" marker-end="url(#arrow)"/>
-  <line x1="230" y1="258" x2="288" y2="210" stroke="#64748b" stroke-width="1" marker-end="url(#arrow)"/>
-  <line x1="230" y1="303" x2="288" y2="230" stroke="#64748b" stroke-width="1" marker-end="url(#arrow)"/>
+  <text x="318" y="164" font-size="11" fill="#64748b">to:</text>
+  <text x="400" y="164" font-size="11" font-weight="600" fill="#1e293b">Human Provider</text>
+
+  <text x="318" y="188" font-size="11" fill="#64748b">reason:</text>
+  <text x="400" y="188" font-size="11" font-weight="600" fill="#b45309">capability_boundary</text>
+
+  <text x="318" y="212" font-size="11" fill="#64748b">context:</text>
+  <text x="400" y="212" font-size="11" font-weight="600" fill="#1e293b">{full history}</text>
+
+  <text x="318" y="236" font-size="11" fill="#64748b">lost:</text>
+  <text x="400" y="236" font-size="11" font-weight="600" fill="#dc2626">none</text>
+
+  <text x="318" y="260" font-size="11" fill="#64748b">chain:</text>
+  <text x="400" y="260" font-size="11" font-weight="600" fill="#3b82f6">[user→AI→provider]</text>
+
+  <text x="318" y="284" font-size="11" fill="#64748b">timestamp:</text>
+  <text x="400" y="284" font-size="11" font-weight="600" fill="#1e293b">2026-03-16T14:30Z</text>
+
+  <!-- Arrows from triggers to record — spread out entry points -->
+  <line x1="240" y1="119" x2="298" y2="140" stroke="#64748b" stroke-width="1" marker-end="url(#arrow)"/>
+  <line x1="240" y1="167" x2="298" y2="170" stroke="#64748b" stroke-width="1" marker-end="url(#arrow)"/>
+  <line x1="240" y1="215" x2="298" y2="200" stroke="#64748b" stroke-width="1" marker-end="url(#arrow)"/>
+  <line x1="240" y1="263" x2="298" y2="235" stroke="#64748b" stroke-width="1" marker-end="url(#arrow)"/>
+  <line x1="240" y1="311" x2="298" y2="265" stroke="#64748b" stroke-width="1" marker-end="url(#arrow)"/>
 
   <!-- Delegation chain example (right side) -->
-  <text x="570" y="90" font-size="14" font-weight="700" fill="#1e293b">Delegation Chain Example</text>
-  <text x="570" y="108" font-size="11" fill="#64748b">Harold's auto diagnosis service</text>
+  <text x="590" y="85" font-size="14" font-weight="700" fill="#1e293b">Delegation Chain</text>
+  <text x="590" y="105" font-size="11" fill="#64748b">Harold's auto diagnosis service</text>
 
   <!-- Harold -->
-  <rect x="570" y="125" width="180" height="50" rx="10" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5" filter="url(#shadow)"/>
-  <text x="660" y="147" text-anchor="middle" font-size="11" font-weight="700" fill="#1e40af">Harold (Provider)</text>
-  <text x="660" y="163" text-anchor="middle" font-size="10" fill="#3b82f6">car diagnosis expert</text>
+  <rect x="590" y="125" width="190" height="52" rx="10" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="685" y="148" text-anchor="middle" font-size="11" font-weight="700" fill="#1e40af">Harold (Provider)</text>
+  <text x="685" y="166" text-anchor="middle" font-size="10" fill="#3b82f6">car diagnosis expert</text>
 
   <!-- Grandson -->
-  <rect x="570" y="205" width="180" height="50" rx="10" fill="#ede9fe" stroke="#8b5cf6" stroke-width="1.5" filter="url(#shadow)"/>
-  <text x="660" y="227" text-anchor="middle" font-size="11" font-weight="700" fill="#5b21b6">Grandson (Delegate)</text>
-  <text x="660" y="243" text-anchor="middle" font-size="10" fill="#8b5cf6">manages scheduling + tech</text>
+  <rect x="590" y="212" width="190" height="52" rx="10" fill="#ede9fe" stroke="#8b5cf6" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="685" y="235" text-anchor="middle" font-size="11" font-weight="700" fill="#5b21b6">Grandson (Delegate)</text>
+  <text x="685" y="253" text-anchor="middle" font-size="10" fill="#8b5cf6">manages scheduling + tech</text>
 
   <!-- AI Agent -->
-  <rect x="570" y="285" width="180" height="50" rx="10" fill="#dcfce7" stroke="#22c55e" stroke-width="1.5" filter="url(#shadow)"/>
-  <text x="660" y="307" text-anchor="middle" font-size="11" font-weight="700" fill="#166534">AI Agent (Executor)</text>
-  <text x="660" y="323" text-anchor="middle" font-size="10" fill="#22c55e">handles platform interactions</text>
+  <rect x="590" y="299" width="190" height="52" rx="10" fill="#dcfce7" stroke="#22c55e" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="685" y="322" text-anchor="middle" font-size="11" font-weight="700" fill="#166534">AI Agent (Executor)</text>
+  <text x="685" y="340" text-anchor="middle" font-size="10" fill="#22c55e">handles platform interactions</text>
 
   <!-- Chain arrows -->
-  <line x1="660" y1="175" x2="660" y2="203" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
-  <text x="685" y="193" font-size="9" fill="#64748b">delegates to</text>
-  <line x1="660" y1="255" x2="660" y2="283" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
-  <text x="685" y="273" font-size="9" fill="#64748b">delegates to</text>
+  <line x1="685" y1="177" x2="685" y2="210" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+  <text x="714" y="198" font-size="9" fill="#64748b">delegates to</text>
+  <line x1="685" y1="264" x2="685" y2="297" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+  <text x="714" y="285" font-size="9" fill="#64748b">delegates to</text>
 
   <!-- Key insight box -->
-  <rect x="30" y="370" width="740" height="90" rx="10" fill="#f0fdf4" stroke="#86efac" stroke-width="1.5"/>
-  <text x="50" y="395" font-size="13" font-weight="700" fill="#166534">Why this matters</text>
-  <text x="50" y="415" font-size="11" fill="#1e293b">Handoff failures are the #1 cause of bad service experiences. "I already explained this to the other person"</text>
-  <text x="50" y="433" font-size="11" fill="#1e293b">is what this protocol exists to prevent. Every handoff captures full context, reason, and what (if anything) was lost.</text>
-  <text x="50" y="451" font-size="11" fill="#64748b">The delegation chain ensures buyers know they're interacting with AI acting on behalf of Harold via grandson.</text>
+  <rect x="30" y="385" width="760" height="95" rx="10" fill="#f0fdf4" stroke="#86efac" stroke-width="1.5"/>
+  <text x="55" y="412" font-size="13" font-weight="700" fill="#166534">Why this matters</text>
+  <text x="55" y="434" font-size="11" fill="#1e293b">Handoff failures are the #1 cause of bad service experiences. "I already explained this to the other person"</text>
+  <text x="55" y="452" font-size="11" fill="#1e293b">is what this protocol exists to prevent. Every handoff captures full context, reason, and what (if anything) was lost.</text>
+  <text x="55" y="470" font-size="11" fill="#64748b">The delegation chain ensures buyers know they're interacting with AI acting on behalf of Harold via grandson.</text>
 </svg>
