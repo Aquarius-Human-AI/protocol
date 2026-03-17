@@ -74,6 +74,12 @@ npm install && npm test  # 59 tests
 - `src/state-machine/` — Contract state machine with autonomy gates
 - `tests/` — Transition, autonomy, schema, and persona scenario tests
 
+### Roadmap
+
+| Document | Description |
+|----------|-------------|
+| [ROADMAP.md](ROADMAP.md) | Big picture: Phase 2 breakdown (6 workstreams), sequencing, milestones, open questions |
+
 ### Archive
 
 Historical docs (completed investigations, superseded plans) go to `archive/` with date prefixes.

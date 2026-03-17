@@ -75,11 +75,13 @@ Real people, real outcomes — protocol walkthroughs grounded in diverse user pe
     └── scenarios/          # Persona scenario tests
 ```
 
-## Status
+## Status & Roadmap
 
 **Phase 1: Pitch** (complete) — Protocol design, TypeScript library, investor materials
 **Phase 2: Build** (next) — Implementation on existing Aquarius backend/AquaBot
 **Phase 3: Open** (future) — Formal open standard, SDKs, platform adapters
+
+See the full [Roadmap](docs/ROADMAP.md) for Phase 2 breakdown (6 workstreams), sequencing, milestones, and open questions.
 
 ## License
 
