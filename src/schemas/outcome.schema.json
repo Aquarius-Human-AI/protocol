@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://protocol.peopleaquarius.com/schemas/outcome",
+  "title": "AWP Outcome",
+  "type": "object",
+  "required": ["id", "owner", "description", "contracts", "status", "progress"],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string" },
+    "owner": { "type": "string" },
+    "description": { "type": "string" },
+    "contracts": { "type": "array", "items": { "type": "string" } },
+    "status": { "type": "string", "enum": ["active", "paused", "complete", "abandoned"] },
+    "progress": {
+      "type": "object",
+      "required": ["total_contracts", "completed", "in_progress", "blocked"],
+      "properties": {
+        "total_contracts": { "type": "integer" },
+        "completed": { "type": "integer" },
+        "in_progress": { "type": "integer" },
+        "blocked": { "type": "integer" }
+      }
+    },
+    "satisfaction": { "type": "number" }
+  }
+}

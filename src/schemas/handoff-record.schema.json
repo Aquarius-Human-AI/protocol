@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://protocol.peopleaquarius.com/schemas/handoff-record",
+  "title": "AWP Handoff Record",
+  "type": "object",
+  "required": ["id", "from", "to", "reason", "context_transferred", "context_lost", "delegation_chain", "timestamp"],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string" },
+    "from": { "type": "string" },
+    "to": { "type": "string" },
+    "reason": { "type": "string", "enum": ["capability_boundary", "confidence_drop", "autonomy_gate", "delegation", "platform_boundary"] },
+    "context_transferred": {
+      "type": "object",
+      "required": ["summary", "key_decisions"],
+      "properties": {
+        "summary": { "type": "string" },
+        "full_history_ref": { "type": "string" },
+        "key_decisions": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "context_lost": { "type": "array", "items": { "type": "string" } },
+    "delegation_chain": { "type": "array", "items": { "type": "string" } },
+    "timestamp": { "type": "string" }
+  }
+}

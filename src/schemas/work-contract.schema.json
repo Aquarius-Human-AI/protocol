@@ -1,0 +1,77 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://protocol.peopleaquarius.com/schemas/work-contract",
+  "title": "AWP Work Contract",
+  "type": "object",
+  "required": ["id", "outcome_id", "participants", "requirements", "terms", "state", "state_history", "verification", "revision_count", "max_revisions"],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string" },
+    "outcome_id": { "type": "string" },
+    "participants": {
+      "type": "object",
+      "required": ["buyer", "provider", "intermediaries"],
+      "properties": {
+        "buyer": { "type": "string" },
+        "provider": { "type": "string" },
+        "intermediaries": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "requirements": {
+      "type": "object",
+      "required": ["description", "acceptance_criteria", "category", "tags", "constraints"],
+      "properties": {
+        "description": { "type": "string" },
+        "acceptance_criteria": { "type": "array", "items": { "type": "string" } },
+        "category": { "type": "string" },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "constraints": { "type": "object" }
+      }
+    },
+    "terms": {
+      "type": "object",
+      "required": ["pricing", "timeline", "payment_trigger", "escrow", "dispute_resolution"],
+      "properties": {
+        "pricing": {
+          "type": "object",
+          "required": ["model", "amount", "currency"],
+          "properties": {
+            "model": { "type": "string" },
+            "amount": { "type": "number" },
+            "currency": { "type": "string" }
+          }
+        },
+        "timeline": { "type": "object" },
+        "payment_trigger": { "type": "string", "enum": ["on_acceptance", "on_milestone", "on_completion", "on_verification"] },
+        "escrow": { "type": "boolean" },
+        "dispute_resolution": { "type": "string", "enum": ["ai_mediated", "human_mediated", "platform_deferred"] }
+      }
+    },
+    "state": { "type": "string", "enum": ["INTENT", "REQUIREMENTS", "MATCHING", "PROPOSAL", "NEGOTIATION", "ACTIVE", "VERIFICATION", "COMPLETE", "DISPUTED", "CANCELLED", "EXPIRED", "FAILED"] },
+    "state_history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["state", "timestamp", "triggered_by"],
+        "properties": {
+          "state": { "type": "string" },
+          "timestamp": { "type": "string" },
+          "triggered_by": { "type": "string" },
+          "autonomy_gate_result": { "type": "string", "enum": ["approved", "blocked", "auto"] }
+        }
+      }
+    },
+    "execution_plan_id": { "type": "string" },
+    "verification": {
+      "type": "object",
+      "required": ["method", "evidence", "result"],
+      "properties": {
+        "method": { "type": "string", "enum": ["self_report", "evidence_based", "outcome_verified", "platform_verified"] },
+        "evidence": { "type": "array", "items": { "type": "string" } },
+        "result": { "type": "string", "enum": ["pending", "accepted", "disputed"] }
+      }
+    },
+    "revision_count": { "type": "integer", "minimum": 0 },
+    "max_revisions": { "type": "integer", "minimum": 1 }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://protocol.peopleaquarius.com/schemas/capability-card",
+  "title": "AWP Capability Card",
+  "type": "object",
+  "required": ["participant_id", "skills", "modalities", "confidence", "constraints", "availability", "pricing", "performance", "version"],
+  "additionalProperties": false,
+  "properties": {
+    "participant_id": { "type": "string" },
+    "skills": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "category", "proficiency_level"],
+        "properties": {
+          "name": { "type": "string" },
+          "category": { "type": "string" },
+          "proficiency_level": { "type": "string", "enum": ["novice", "intermediate", "expert", "master"] }
+        }
+      }
+    },
+    "modalities": { "type": "array", "items": { "type": "string", "enum": ["phone", "video", "text", "in-person", "web-automation"] } },
+    "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+    "constraints": { "type": "array", "items": { "type": "object", "required": ["type", "description"], "properties": { "type": { "type": "string" }, "description": { "type": "string" } } } },
+    "availability": { "type": "object", "required": ["timezone"], "properties": { "schedule": { "type": "string" }, "timezone": { "type": "string" }, "response_time_estimate": { "type": "string" } } },
+    "pricing": { "type": "object", "required": ["model", "min", "max", "currency"], "properties": { "model": { "type": "string", "enum": ["hourly", "fixed", "milestone", "pay-what-you-want"] }, "min": { "type": "number" }, "max": { "type": "number" }, "currency": { "type": "string" } } },
+    "performance": { "type": "object", "required": ["contracts_completed", "completion_rate", "avg_satisfaction", "dispute_rate"], "properties": { "contracts_completed": { "type": "integer" }, "completion_rate": { "type": "number" }, "avg_satisfaction": { "type": "number" }, "dispute_rate": { "type": "number" } } },
+    "version": { "type": "object", "required": ["last_updated", "change_log"], "properties": { "last_updated": { "type": "string" }, "change_log": { "type": "array", "items": { "type": "string" } } } }
+  }
+}
