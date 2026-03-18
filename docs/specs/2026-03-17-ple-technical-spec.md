@@ -44,8 +44,8 @@ Define a universal, composable format for representing outcomes that both humans
 | Data format | JSON Schema with semantic validation. Each outcome is a typed document with required and optional fields. Extend via JSON-LD for interoperability across external systems. |
 | Outcome definition | Natural language description paired with structured fields: outcome_type (enum: deliverable, state_change, metric_target, decision), domain (vertical tag), and a machine-parseable success_condition. |
 | Outcome orchestration | An outcome decomposes into one or more contracts. The AI agent manages this decomposition: identifying implicit needs from conversation, prioritizing by urgency and feasibility, managing dependencies between contracts, and surfacing progress in language the user understands. |
-| Contract structure | Each contract specifies: participants (buyer, provider, intermediaries), structured requirements with acceptance criteria, pricing terms and payment trigger (on_acceptance, on_milestone, on_completion, or on_verification), escrow setting, dispute resolution method, and a reference to its execution plan. |
-| Contract state machine | Every contract follows the same state machine regardless of participant types: INTENT → REQUIREMENTS → MATCHING → PROPOSAL → NEGOTIATION → ACTIVE → VERIFICATION → COMPLETE. Terminal states: CANCELLED, EXPIRED, FAILED. A DISPUTED state handles verification failures. The state machine is identical for human↔human, human↔agent, and agent↔agent — only the autonomy gates differ. |
+| Contract structure | Each contract specifies: participants (buyer, intermediaries — providers are tracked per-task, not per-contract), structured requirements with acceptance criteria, pricing terms and payment trigger (on_acceptance, on_milestone, on_completion, or on_verification), escrow setting, dispute resolution method, and a reference to its execution plan. |
+| Contract state machine | Every contract follows the same state machine regardless of participant types: INTENT → REQUIREMENTS → ACTIVE → VERIFICATION → COMPLETE. Terminal states: CANCELLED, EXPIRED, FAILED. A DISPUTED state handles verification failures. Matching, proposal, and negotiation happen at the **task level** via Layer C's per-task matching pipeline, not at the contract level. The state machine is identical for human↔human, human↔agent, and agent↔agent — only the autonomy gates differ. |
 | Acceptance criteria | Array of verifiable assertions. Each criterion has a type (binary_check, threshold, human_judgment, llm_evaluation) and a target value. Binary checks are auto-evaluated; human_judgment triggers QA routing. |
 | Confidence | Probabilistic estimate of fulfillment likelihood before work begins, expressed as a single float (0.0-1.0). Updated in real time as tasks complete. Initial estimates calibrated from historical data in Layer C. |
 | SLA parameters | Structured object containing: max_duration (ISO 8601 duration), max_cost (currency + amount), quality_floor (0-1 score threshold), and escalation_trigger (conditions that force human review or buyer notification). |
@@ -86,8 +86,8 @@ Convert buyer-facing outcomes into machine-routable work units with explicit dep
 | Dependency graph | Explicit edges between tasks. The engine must detect circular dependencies and reject them. Support for soft dependencies (preferred ordering) and hard dependencies (strict sequencing). |
 | Parallelization rules | Tasks with no mutual dependencies are marked parallel. The engine calculates critical path length and identifies bottleneck tasks. Resource constraints (e.g., 'only 2 concurrent human reviewers') are modeled as capacity limits. |
 | Human/AI task typing | Each task gets a suitability score for AI execution (0-1) and human execution (0-1) based on: task complexity, error tolerance, judgment requirement, regulatory constraint, and historical success rates from Layer C. |
-| Granularity control | Configurable decomposition depth. Default: decompose until each task is completable in under 35 minutes (the empirically observed degradation threshold for AI agents). Buyer can override for coarser or finer granularity. |
-| Learning loop | Every completed job feeds decomposition patterns back. Over time, the engine learns that 'produce a podcast package' for a specific domain reliably decomposes into a known subgraph, reducing planning latency and improving cost estimates. |
+| Granularity control | Decompose until each AI task is completable in under 35 minutes (the empirically observed degradation threshold for AI agents). Human tasks have no duration ceiling. Buyer granularity override is deferred. |
+| Learning loop | Deferred for v1. Every completed job's DAG is stored for future offline training. Over time, the engine will learn that 'produce a podcast package' for a specific domain reliably decomposes into a known subgraph, reducing planning latency and improving cost estimates. |
 | Replanning | If a task fails or a confidence threshold drops during execution, the engine can replan the remaining subgraph without restarting completed work. This requires the DAG to be mutable at runtime with version tracking. |
 
 ### State of the Art Reference
@@ -119,13 +119,13 @@ Maintain a live, scored inventory of available labor that the routing engine can
 | Attribute | Specification |
 | --- | --- |
 | Worker node schema | Each node has: node_id, node_type (human, ai_agent, hybrid_unit, workflow), capabilities[] (structured skill tags with proficiency scores), availability (schedule or API endpoint), cost_model (per_task, per_hour, per_token, outcome_share), and metadata (source, discovery_date, verification_status). |
-| Identity and delegation | Each participant has an identity record with: type (human, agent, platform), trust_level (unverified through government-verified), autonomy_setting (advisor, facilitator, agent, delegate), delegation_chain (who authorized this participant to act), and risk_profile (max auto-commit value, restricted categories, approval rules). Delegation is first-class — the full chain from the original human to the current actor is tracked. |
-| Capability taxonomy | Hierarchical skill taxonomy with at least 3 levels (domain > function > specialization). Example: 'marketing > content_writing > long_form_seo'. Skills are not self-reported — they are inferred from completed work and verified through test tasks. Capabilities include modality support (phone, video, text, in-person, web-automation) and constraint annotations (e.g., 'ESL — simple English preferred', 'scheduling handled by proxy'). |
-| Performance history | Per-node, per-skill historical performance stored as time-series: completion_rate, quality_score, speed_vs_estimate, cost_vs_estimate, escalation_rate, and error_categories. Windowed aggregates (7d, 30d, 90d, all-time) for routing decisions. |
-| Cost/speed/quality surface | For each node-skill pair, maintain a 3D efficiency surface: at what cost and speed does this worker deliver what quality level? This surface is what the routing engine optimizes against when matching tasks. |
-| Web search crawl pipeline | Automated discovery of human freelancers and AI agent services via web search. Pipeline: (1) search for workers by skill/domain, (2) extract structured profile data, (3) create candidate node, (4) run verification task, (5) promote to active index. Crawl cadence: continuous for high-demand skills, weekly for long-tail. |
-| Matching algorithm | Multi-objective optimization: given a task's required_capabilities, time_constraint, and budget, find the Pareto-optimal set of candidate workers ranked by expected quality. Use a learned scoring function trained on historical task-worker-outcome triples from Layer E. Matching returns ranked candidates with confidence scores and uncertainty flags — not just 'can they do it' but 'can they do it given these constraints, and what might go wrong?' |
-| Index freshness | Human availability windows updated via calendar integration or manual status. AI agent availability checked via health endpoint ping. Stale nodes (no activity in 90 days) are demoted in ranking but not removed. |
+| Identity and delegation | Each participant has an IdentityRecord with: node_type (human, ai_agent, hybrid_unit, workflow), trust_level (unverified, email_verified, platform_verified, identity_verified, credential_verified), autonomy_setting (advisor, facilitator, agent, delegate), delegation_chain (max depth 20), and risk_profile (max auto-commit value, restricted categories, approval rules). Delegation is first-class — the full chain from the original human to the current actor is tracked. Delegation chains are modeled in Layer C but not enforced in Layer F v1 (single identity per account). |
+| Capability taxonomy | Free-form skill tags matched via LLM, not a premature hierarchical taxonomy. Tags are specific and descriptive (e.g., 'residential_gutter_cleaning' not just 'cleaning'). A formal taxonomy is deferred until sufficient job volume (5K+) reveals natural clustering. Capabilities include modality support (phone, video, text, in-person, web-automation) and constraint annotations (e.g., 'ESL — simple English preferred', 'scheduling handled by proxy'). |
+| Performance history | Per-node, per-skill historical performance: completion_rate, quality_score, speed_score, cost_efficiency, escalation_rate, and reliability. Bayesian scoring with Beta distributions for rates and Normal distributions for continuous scores. Scores flow from Layer E via async feedback events. |
+| Cost/speed/quality scoring | For each worker-skill pair, the 6-dimension Bayesian reputation scores from Layer E (quality, speed, cost_efficiency, completion_rate, escalation_rate, reliability) are used by the matching pipeline. The LLM reasoning agent in the final matching stage weighs these alongside task requirements. |
+| Web search crawl pipeline | Demand-driven discovery of human freelancers and AI agent services via web search. Pipeline: (1) triggered by actual task demand (not speculative), (2) search for workers by skill/domain using Bing Web Search API, (3) extract structured profile data via lightweight scraping, (4) create capability card with confidence-discounted scores, (5) async embedding generation for vector search. Computer tool interface provides read-only access to gated platforms. |
+| Matching algorithm | Three-stage pipeline: (1) retrieval — hard filters (service commerce dimensions) + vector similarity search on Cosmos DB, (2) Cohere Rerank Fast (Azure Foundry) for candidate reranking, (3) LLM reasoning agent for final top-N ranking with full context. Per-task matching triggered when a task enters READY state. Returns top-N candidates (default 5) with scores. Learned scoring function deferred until sufficient training data exists. |
+| Index freshness | Availability tracked on CapabilityCard (schedule object with timezone, working hours, exceptions). Stale nodes (no activity in 90 days) are demoted in routing priority but never removed — their historical profile is a valuable prior per ADR-006. |
 | Hybrid units | First-class support for composite worker nodes: one human operator + one AI workflow + historical performance as a unit. This is the key differentiator from freelancer platforms (which profile individuals) and agent stores (which profile tools). |
 | External platform adapters | External platforms (Fiverr, Upwork, TaskRabbit) register as participants with capabilities derived from their service catalogs. The adapter translates between the protocol's capability model and the platform's categories, ratings, and pricing structures. |
 
@@ -137,9 +137,9 @@ Oracle's production AI agents use role-based logic with pre-trained agents for s
 
 ### Key Technical Decisions
 
-- Whether the capability taxonomy is predefined or emergent from job data (recommendation: start with a curated seed taxonomy of 200-500 skills, expand automatically as new job types appear)
+- Whether the capability taxonomy is predefined or emergent from job data (decision: free-form tags matched via LLM for v1; formal taxonomy deferred until 5K+ jobs reveal natural clustering)
 
-- How to cold-start reputation for newly discovered workers (recommendation: verification task + initial low-confidence score that converges after 5-10 completed jobs)
+- How to cold-start reputation for newly discovered workers (decision: source-dependent Bayesian priors — web_crawl gets uninformative prior, platform_import gets weakly positive prior; confidence converges after 5+ AWP completions per ADR-006/007)
 
 - How to handle AI agent versioning — when a model updates, does its performance history reset? (recommendation: soft reset — decay historical scores by 50%, rebuild from new completions)
 
@@ -155,13 +155,13 @@ Execute task DAGs reliably, evaluate every output against the outcome schema, an
 
 | Attribute | Specification |
 | --- | --- |
-| State machine | Each task moves through: queued → assigned → in_progress → evaluating → (passed | failed | needs_review) → complete. Each transition is timestamped and logged. The DAG-level state machine tracks: decomposed → routing → executing → evaluating → (fulfilled | escalated | failed). |
+| State machine | Each task has a unified TaskExecutionState: PENDING → READY → MATCHING → MATCHED → ASSIGNED → IN_PROGRESS → EVALUATING → (PASSED | FAILED_EVALUATION | NEEDS_REVIEW) → COMPLETE. Additional states: PAUSED (human tasks), RETRYING, REROUTING, SKIPPED. Each transition is timestamped and logged. The execution plan has its own status lifecycle: PENDING_APPROVAL → APPROVED → EXECUTING → COMPLETE/FAILED/REPLANNING. |
 | Evaluation engine | Every task output is evaluated against the acceptance criteria from Layer A. Three evaluation modes: (1) Automated: LLM-as-judge using a separate evaluator model (not the same model that performed the task) with structured rubrics. (2) Metric-based: programmatic checks against quantitative thresholds. (3) Human QA: routed to a human reviewer when automated confidence is below threshold. |
 | LLM-as-judge implementation | Use a frontier model (e.g., Claude Opus) as the evaluator, distinct from execution models. Provide the evaluator with: the original acceptance criteria, the task output, and a structured scoring rubric. Output: pass/fail decision, quality score (0-1), and specific deficiency notes for retry guidance. |
 | Handoff triggers | Five conditions trigger a handoff between participants: (1) capability boundary — current assignee can't do the next step, (2) confidence drop — assignee's confidence falls below threshold, (3) autonomy gate — next action exceeds the user's risk tolerance, (4) delegation request — participant explicitly delegates to another, (5) platform boundary — work must happen on an external platform. Every handoff produces a record capturing who handed off to whom, why, what context was transferred, and critically, what context was lost in the transfer. |
 | Context preservation | On handoff, the full task context is serialized: original task spec, all intermediate outputs, evaluation results, and conversation/reasoning traces. Context window management uses summarization for long-running tasks (addressing the documented 35-minute degradation problem). |
-| Retry and fallback | On task failure: (1) retry with same worker up to retry_limit, (2) reroute to next-best worker from Layer C, (3) decompose into finer subtasks and retry, (4) escalate to human. Each retry path is logged for pattern analysis. |
-| Progress tracking | Real-time event stream (WebSocket or SSE) emitting: task state changes, completion percentages (based on DAG critical path), quality signals from evaluation, and cost accumulation. This feeds Layer F's buyer control surface. |
+| Retry and fallback | On task failure: (1) retry with same worker up to retry_limit, (2) reroute to next-best worker from Layer C, (3) trigger replan via Layer B. In-flight re-decomposition within Layer D is deferred. Last stable state is passed to the next worker on reroute. Each retry path is logged for pattern analysis. |
+| Progress tracking | Real-time event stream (SSE) emitting: task state changes, completion percentages (weighted by estimated duration), quality signals from evaluation, and cost accumulation. Single SSE endpoint per contract, all events with EventImportance field (CRITICAL/HIGH/MEDIUM/LOW/DEBUG). Events stored in Cosmos DB for replay via last_event_id. This feeds Layer F's buyer control surface. |
 | Timeout and deadlines | Each task has a max_duration from the outcome schema. Soft timeout at 80% triggers a warning. Hard timeout triggers automatic rerouting or escalation. DAG-level deadline monitoring ensures the overall SLA is on track. |
 
 ### Autonomy Levels
@@ -205,12 +205,12 @@ Verify every unit of work, build structured performance scores per worker node, 
 | Attribute | Specification |
 | --- | --- |
 | Verification tiers | Three tiers, selected per contract based on value and risk: (1) self-report — provider claims completion, used for low-risk high-trust work, (2) evidence-based — deliverables checked against acceptance criteria, the standard for most contracts, (3) outcome-verified — measurable result confirmed by the system, used for high-value results-based work. Who verifies depends on context: AI for objective criteria, human for subjective quality, community for reputation-based vouching, external platform for platform-native completion signals. |
-| Audit trail | Immutable, append-only log of every action in the system. Each entry: timestamp, actor (human_id or agent_id), action_type, input_hash, output_hash, evaluation_result, and parent_task_id. Stored in a tamper-evident structure (e.g., Merkle tree or append-only database with cryptographic chaining). |
+| Audit trail | Immutable, append-only log of every action in the system. Each entry: timestamp, actor (human_id or agent_id), action_type, input_hash, output_hash, evaluation_result, and parent_task_id. Stored in Cosmos DB with SHA-256 hash chaining (each entry chains to the previous via previous_hash). Separate from Layer D's operational event store. |
 | Provenance graph | For every completed outcome, a full provenance graph showing: which worker performed which task, what tools were used, what inputs were consumed, what outputs were produced, and what evaluation scores were assigned. This is the 'receipt' the buyer can inspect. |
-| QA checks | Automated quality gates applied post-evaluation: consistency checks (does the output match the schema?), plagiarism/originality checks (for content tasks), factual accuracy checks (for research tasks), and format compliance checks. Results feed into the worker's quality_score. |
-| Reputation scoring model | Multi-dimensional score per worker node, per skill: (1) completion_rate (% of assigned tasks completed successfully), (2) quality_score (rolling average of evaluation scores), (3) speed_score (actual vs. estimated duration), (4) cost_efficiency (actual vs. estimated cost), (5) escalation_rate (how often this worker's output needs human review), (6) reliability (variance of the above metrics — low variance = predictable worker). |
-| Scoring mechanics | Bayesian updating: start with prior from verification task, update with each completed job. Recent performance weighted more heavily (exponential decay with 30-day half-life). Minimum 5 completed jobs before a score is used for high-value routing. Separate scores per skill — a worker excellent at transcription may be mediocre at summarization. |
-| Dispute resolution | When verification fails, the contract enters a disputed state. Evidence is compiled (deliverables, acceptance criteria, communication history, handoff records) and resolution scales with contract value: AI mediation for low-value disputes, human mediator for medium-value, formal arbitration for high-value, and deference to platform dispute processes for external platform contracts. Performance impact is recorded on both parties' capability profiles. |
+| QA checks | Deferred for v1. Automated quality gates (plagiarism, factual accuracy, format compliance) are planned as function tools for the evaluator agent. v1 relies on the single LLM evaluator agent for quality assessment. |
+| Reputation scoring model | Multi-dimensional score per worker node, per skill, 6 dimensions: (1) completion_rate, (2) quality_score, (3) speed_score, (4) cost_efficiency, (5) escalation_rate, (6) reliability. Composite weighted average (configurable weights via env vars). LLM-driven agents handle skill normalization, update weight determination, dispute impact, review weighting, and anomaly detection. |
+| Scoring mechanics | Full Bayesian updating: Beta distributions for rate dimensions, Normal distributions for continuous scores. Start with source-dependent priors (web_crawl = uninformative, platform_import = weakly positive). Minimum 5 AWP completions before a score is used for high-value routing. Separate scores per skill. Exponential decay is deferred for v1 — all data points weighted equally. |
+| Dispute resolution | When verification fails, the contract enters a DISPUTED state. Evidence is compiled (deliverables, acceptance criteria, evaluation scores, communication history, handoff records). An AI agent recommends resolution (refund, redo, partial_credit, dismissed) and the buyer makes the final decision. Dispute impact on reputation is determined by an LLM agent in Layer E. Performance impact is recorded on both parties' capability profiles. |
 | Feedback loop to Layer C | After each job, updated reputation scores are written back to the worker node in Layer C. The routing algorithm in Layer C uses these scores as primary ranking features. This is the core flywheel: more jobs → richer reputation data → better routing → better outcomes → more buyer trust → more jobs. |
 | Trust signals for buyers | Buyer-facing trust indicators derived from the reputation layer: worker verification status, number of completed jobs of this type, average quality score, and a 'confidence band' for expected outcome quality. These surface in Layer F. |
 
@@ -222,7 +222,7 @@ The hybrid reputation unit (one operator + one workflow + one agent stack + hist
 
 ### Key Technical Decisions
 
-- How to weight different reputation dimensions in routing (recommendation: learn the weights from buyer satisfaction data rather than hand-tuning — use a simple regression model: buyer_satisfaction = f(quality, speed, cost, reliability))
+- How to weight different reputation dimensions in routing (decision: configurable static weights via env vars for v1 — quality=0.30, completion=0.20, speed=0.15, cost=0.15, escalation=0.10, reliability=0.10. Learned weights deferred until sufficient buyer satisfaction data exists)
 
 - How to handle reputation gaming (recommendation: statistical anomaly detection on score trajectories, plus periodic random QA audits on high-reputation workers)
 
@@ -230,26 +230,28 @@ The hybrid reputation unit (one operator + one workflow + one agent stack + hist
 
 ## Layer F — Buyer Control Surface
 
-The buyer control surface is the interface through which buyers interact with the system. It is not a moat — it is a product layer. But it is essential for trust, adoption, and differentiation. The design principle is a cockpit, not a dashboard: the buyer can steer, not just observe.
+The control surface is the unified interface through which both buyers and workers interact with the system. It is not a moat — it is a product layer. But it is essential for trust, adoption, and differentiation. The design principle is a cockpit, not a dashboard: the buyer can steer, not just observe.
 
-The autonomy level configured in the buyer's identity record directly governs the behavior of this layer — a buyer at Advisor level sees every decision point, while a buyer at Delegate level sees only progress summaries and exception alerts.
+The same application serves both roles — buyers and workers. Content, layout, and available actions adapt based on user context. A single account can be both a buyer and a worker simultaneously. The autonomy level governs gate behavior — a buyer at Advisor level sees every decision point, while a buyer at Delegate level sees only progress summaries and exception alerts.
 
 ### Purpose
 
-Give buyers visibility into work progress, approval authority over critical steps, and the ability to intervene or redirect without needing to understand the underlying labor composition.
+Give buyers visibility into work progress, approval authority over critical steps, and the ability to steer without needing to understand the underlying labor composition. Give workers a surface to accept tasks, submit deliverables, and view reputation.
 
 ### Technical Specification
 
 | Attribute | Specification |
 | --- | --- |
-| Live progress view | Real-time visualization of the DAG execution state. Shows: which tasks are complete, in progress, or queued; current quality scores; time and cost tracking against SLA; and the critical path to completion. Powered by the WebSocket/SSE event stream from Layer D. |
+| Three-tier execution view | Tier 1 — Roadmap: one progress bar per phase (planning, matching, execution, verification) with percentage complete. Tier 2 — DAG: full task dependency graph with status badges (React Flow). Tier 3 — Detail: per-task side drawer showing activity log, comments, and actions. Powered by SSE event stream from Layer D with last_event_id reconnection. |
 | Approval checkpoints | Configurable gates where execution pauses until buyer approves. Default gates: (1) after decomposition (buyer reviews the task plan before execution begins), (2) at major milestones (e.g., after the first draft of a deliverable), (3) before final delivery. Buyers can add or remove gates. Gate frequency is driven by autonomy level — Advisor mode triggers at every transition, Delegate mode only at high-risk transitions. |
-| Override and redirect | Buyer can: (1) reject a task output and request rework with specific feedback, (2) reassign a task to a different worker type (e.g., 'use a human for this step'), (3) modify the remaining plan (add/remove/reorder tasks), (4) abort the job with partial delivery. All overrides are logged and feed into Layer E. |
-| Abstraction level | The default view shows outcome-level progress (e.g., '72% complete, 3 of 4 milestones passed, on track for SLA'). Buyer can drill down into task-level detail if desired, but never needs to. The system should feel like ordering a service, not managing a project. |
-| Notifications | Event-driven alerts for: milestone completion, quality issues requiring attention, SLA risk (projected to miss deadline or budget), approval gates waiting for input, and job completion. Delivered via webhook, email, or in-app depending on buyer preference. |
+| Buyer steering | Buyer can: (1) add comments on individual tasks (factored into orchestrator decisions), (2) request a specific provider for unassigned tasks (soft preference — boosts in matching), (3) submit free-text feedback on completed tasks (feeds into Layer E). All actions are logged and feed into Layer E. |
+| Worker experience | Workers view assigned tasks, accept/decline assignments, submit deliverables (free-text + minimal structured fields), and view their reputation scores. Matching is system-driven — workers don't browse or bid. Profile claiming flow for crawl-discovered workers via invite link. |
+| Notifications | In-app notifications for v1. All event importance levels shown. Derived from SSE events: autonomy gates, task completions, failures, disputes, SLA warnings. SMS/email channels deferred. |
 | Audit access | Buyer can request the full provenance graph from Layer E for any completed job. This includes who did what, evaluation scores, and the decision trail. Exportable as a structured report. |
-| Technical implementation | React/Next.js frontend consuming a real-time event API. Server-Sent Events for progress streaming. REST API for control actions (approve, reject, redirect, abort). GraphQL for flexible querying of job state and history. |
-| Mobile considerations | Approval gates and notifications must work on mobile. The progress view should be responsive. Override actions are desktop-only in v1 to avoid accidental interventions on small screens. |
+| Technical implementation | Vite + React 19 + TypeScript SPA with Mantine component library. SSE for real-time progress. REST API for control actions (direct to layer APIs, no BFF). TanStack Query for server state, Zustand for UI state. OpenAI Agents SDK UI (`@openai/agents-ui`) for intake chat interface. React Flow for DAG visualization. |
+| Authentication | Azure AD B2C for identity management. Single identity serves both buyer and worker roles. No delegation chains in v1. |
+| Payments | Payment section gated by environment flag (off by default). Placeholders for Skyfire (agentic payments) and Stripe (human payments). Cost tracking shown regardless of payment flag. |
+| Generative UI | Server-driven UI elements where the backend determines component rendering based on task type and context. Component registry (whitelist) maps server definitions to React components. |
 
 ### State of the Art Reference
 
@@ -276,25 +278,27 @@ The layers are not independent — they form a tightly coupled feedback system. 
 
 ## Infrastructure Requirements
 
-- Event bus (Kafka or equivalent) for real-time inter-layer communication
+- **Event bus**: Kafka (Azure Event Hubs with Kafka protocol) for inter-layer communication. Topic prefix: `pln.*`
 
-- Time-series database for performance metrics and reputation scoring (InfluxDB, TimescaleDB)
+- **Primary database**: Azure Cosmos DB NoSQL for all layers — contracts, execution plans, capability cards, reputation scores, audit trail, provenance, notifications, UI state
 
-- Graph database for the capability index and provenance graphs (Neo4j or equivalent)
+- **Vector index**: Cosmos DB vector index with Qwen embeddings (Azure Foundry) for capability card similarity search
 
-- Append-only audit log with cryptographic integrity (purpose-built or PostgreSQL with logical replication)
+- **Object storage**: Azure Blob Storage for task artifacts and intermediate outputs
 
-- Object storage for task artifacts and intermediate outputs
+- **Cache**: Azure Cache for Redis
 
-- WebSocket/SSE infrastructure for real-time buyer-facing event streaming
+- **SSE infrastructure**: FastAPI with Server-Sent Events for real-time buyer/worker event streaming
 
-- LLM API access to frontier models for planning (Layer B), execution (Layer D), and evaluation (Layer D)
+- **LLM provider**: Azure OpenAI (all agents use `OpenAIResponsesModel` with `AsyncOpenAI` client, NOT `AsyncAzureOpenAI`)
 
-- Web search API access for labor discovery pipeline (Layer C)
+- **Agent framework**: OpenAI Agents SDK (`openai-agents`) for all agent orchestration
 
-- Contract state machine runtime (document store with event sourcing for state transitions)
+- **Reranking**: Cohere Rerank Fast (Azure Foundry) for matching pipeline
 
-- Platform adapter framework for external marketplace integration (Fiverr, Upwork, etc.)
+- **Web search**: Bing Web Search API (Azure Cognitive Services) for demand-driven labor discovery
+
+- **Hosting**: Azure Kubernetes Service (AKS) or Azure Container Apps
 
 ## Privacy and Data Governance
 

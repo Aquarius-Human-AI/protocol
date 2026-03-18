@@ -67,10 +67,7 @@ class OutcomeType(str, Enum):
 class ContractState(str, Enum):
     INTENT = "intent"
     REQUIREMENTS = "requirements"
-    MATCHING = "matching"
-    PROPOSAL = "proposal"
-    NEGOTIATION = "negotiation"
-    ACTIVE = "active"
+    ACTIVE = "active"                    # Matching/negotiation happens at task level (Layer C)
     VERIFICATION = "verification"
     COMPLETE = "complete"
     DISPUTED = "disputed"
@@ -169,7 +166,6 @@ The `estimated_amount_usd` is set during intake as a rough estimate. `final_amou
 ```python
 class Participants(BaseModel):
     buyer_id: str                            # Identity ID of the buyer
-    provider_id: str | None = None           # Assigned by Layer C during MATCHING
     intermediary_ids: list[str] = []         # Compliance agents, referral sources, delegation chain members
 ```
 
@@ -281,10 +277,7 @@ The `@context` mapping is not enforced by Pydantic validators — it is applied 
 
 ```
 INTENT        → REQUIREMENTS, CANCELLED, EXPIRED
-REQUIREMENTS  → MATCHING, CANCELLED, EXPIRED
-MATCHING      → PROPOSAL, CANCELLED, EXPIRED
-PROPOSAL      → NEGOTIATION, MATCHING, CANCELLED, EXPIRED
-NEGOTIATION   → ACTIVE, MATCHING, CANCELLED, EXPIRED
+REQUIREMENTS  → ACTIVE, CANCELLED, EXPIRED
 ACTIVE        → VERIFICATION, FAILED, CANCELLED
 VERIFICATION  → COMPLETE, ACTIVE, DISPUTED
 DISPUTED      → ACTIVE, FAILED, CANCELLED
@@ -295,8 +288,7 @@ FAILED        → (terminal)
 ```
 
 Notable transitions:
-- `PROPOSAL → MATCHING`: No suitable candidates, re-search with broadened criteria
-- `NEGOTIATION → MATCHING`: Terms couldn't be agreed, search for new providers
+- `REQUIREMENTS → ACTIVE`: Contract activates when requirements are finalized; Layer B then decomposes and matching/negotiation happen per-task at the Layer C/D level
 - `VERIFICATION → ACTIVE`: Rework needed, send back to execution
 - `DISPUTED → ACTIVE`: Dispute resolved, rework agreed upon
 
@@ -307,17 +299,16 @@ Each layer owns specific transitions and notifies Layer A to update the record:
 | Transition | Owner | Notes |
 |---|---|---|
 | INTENT → REQUIREMENTS | Layer A (intake agent) | Intake conversation produces structured schema |
-| REQUIREMENTS → MATCHING | Layer A | Fires automatically when schema is finalized |
-| MATCHING → PROPOSAL | Layer C | Capability index finds candidates |
-| PROPOSAL → NEGOTIATION | Layer C/D | Candidates ranked, proposals presented |
-| NEGOTIATION → ACTIVE | Layer D | Terms accepted (subject to autonomy gate) |
-| ACTIVE → VERIFICATION | Layer D | Work delivered |
+| REQUIREMENTS → ACTIVE | Layer A | Fires when requirements are finalized; triggers Layer B decomposition |
+| ACTIVE → VERIFICATION | Layer D | All tasks delivered |
 | VERIFICATION → COMPLETE | Layer D/E | Acceptance criteria evaluated |
 | VERIFICATION → DISPUTED | Layer D | Verification failed or contested |
 | DISPUTED → * | Layer D | Dispute resolution (logic in Layer D) |
 | * → CANCELLED | Any layer / buyer | Buyer or system cancels |
 | * → EXPIRED | Governance layer | Timeout triggered |
 | * → FAILED | Layer D / governance | Unrecoverable failure |
+
+Note: Matching, proposal, and negotiation happen at the **task level** via Layer C's per-task matching pipeline. See SPEC-LAYER-C Section 12 for the task-level state machine (PENDING → READY → MATCHING → MATCHED → ASSIGNED → IN_PROGRESS → EVALUATING → COMPLETE/FAILED).
 
 ### 4.3 Governance Interface
 
@@ -338,14 +329,14 @@ class TransitionResult(BaseModel):
 
 The governance layer checks:
 1. **Legality**: Is this transition in the allowed transitions map?
-2. **Consistency**: Does the contract have required data for the target state? (e.g., can't go to ACTIVE without acceptance criteria, pricing, and a provider)
+2. **Consistency**: Does the contract have required data for the target state? (e.g., can't go to ACTIVE without acceptance criteria and pricing)
 3. **Autonomy gate**: Does this transition require human approval given the contract's autonomy level and risk profile?
 
 Layer A provides the `request_transition()` function. The governance layer (cross-cutting, not part of Layer A) implements the validation logic. Layer A enforces that all transitions go through this interface.
 
 ### 4.4 Schema Mutability
 
-- **Pre-ACTIVE states** (INTENT through NEGOTIATION): Schema is a living draft. Any field can be modified.
+- **Pre-ACTIVE states** (INTENT and REQUIREMENTS): Schema is a living draft. Any field can be modified.
 - **ACTIVE and beyond**: Schema is frozen. Only `terms` (pricing, timeline) are negotiable via the amendment flow.
 - **Amendment flow**: Creates a new contract version. The old version remains the contractual version until both parties agree to the amendment. In-flight tasks continue against the current version. If the amendment is accepted, tasks are updated to meet the new contract (requires buyer verification per ADR-003 autonomy settings).
 
@@ -383,7 +374,7 @@ intake_agent = Agent(
 3. Agent proposes acceptance criteria — buyer confirms, modifies, or adds
 4. Agent produces a rough pricing estimate (this is an estimate only; Layer C refines)
 5. Agent calls `finalize_outcome` tool which produces the structured `Outcome` + `WorkContract` and emits `outcome.created` event
-6. Contract enters REQUIREMENTS state, then auto-transitions to MATCHING
+6. Contract enters REQUIREMENTS state, then transitions to ACTIVE (which triggers Layer B decomposition and buyer approval of the execution plan)
 
 ### 5.4 Intake Agent Instructions (Key Behaviors)
 
@@ -411,7 +402,7 @@ Intake conversations use the OpenAI Agents SDK session system:
 
 ```python
 from agents.extensions.sessions import SQLiteSession  # Dev
-# Production: PostgreSQL-backed session
+# Production: Cosmos DB-backed session (custom SessionABC implementation)
 
 session = SQLiteSession("pln_intake.db")
 result = await Runner.run(
@@ -474,7 +465,7 @@ A separate validation module (`validation.py`) performs logical consistency chec
 
 3. **SLA feasibility**: Warn if `max_duration` is unreasonably short for the `outcome_type`. Rule-based heuristics with configurable thresholds per domain.
 
-4. **State consistency**: Validate that required fields are populated for the current state. E.g., a contract in ACTIVE state must have `participants.provider_id` set.
+4. **State consistency**: Validate that required fields are populated for the current state. E.g., a contract in ACTIVE state must have `acceptance_criteria` and `pricing` set. (Providers are tracked at the task level, not the contract level.)
 
 ```python
 class ValidationResult(BaseModel):
@@ -632,7 +623,7 @@ All tests use pytest + pytest-asyncio. LLM calls are mocked.
 - Every illegal transition is rejected (e.g., INTENT → COMPLETE, COMPLETE → ACTIVE)
 - Terminal states reject all outgoing transitions
 - State history is appended on transition
-- State consistency validation: ACTIVE requires provider_id, acceptance_criteria, pricing
+- State consistency validation: ACTIVE requires acceptance_criteria, pricing (provider is per-task, not per-contract)
 
 ### 12.3 Validation Tests (`test_validation.py`)
 
@@ -673,7 +664,7 @@ All tests use pytest + pytest-asyncio. LLM calls are mocked.
 
 ## 14. Open Questions (Resolve During Implementation)
 
-1. **Session backend for production**: SQLiteSession for dev is clear. Confirm PostgreSQL session adapter for production or build custom `SessionABC` implementation.
+1. **Session backend for production**: SQLiteSession for dev is clear. Build custom `SessionABC` implementation backed by Cosmos DB (consistent with all other layers' storage choice).
 2. **Governance layer location**: Cross-cutting — does it get its own package or live in `shared/`? Decide when Layer D begins.
 3. **Amendment notification flow**: When an amendment is proposed post-ACTIVE, the notification to the other party goes through what channel? Depends on Layer F (buyer surface) decisions.
 4. **Intake agent persona tuning**: The system prompt needs iteration with real user conversations. Start with the principles in Section 5.4, refine through testing.

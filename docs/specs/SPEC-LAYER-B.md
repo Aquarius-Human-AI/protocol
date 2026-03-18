@@ -31,7 +31,7 @@ Layer B is an **execution layer** — it is necessary infrastructure but not a c
 - Buyer approval gate for autonomy levels 1 (Advisor) & 2 (Facilitator)
 - Plan summary generation: human-readable summary + simplified task list for buyer review (rich UI)
 
-### Deferred (see DEFERRED-LAYER-B.md)
+### Deferred (see DEFERRED.md)
 
 - Learning loop (offline training from historical DAG patterns)
 - Fine-tuned decomposition model (start with frontier model, move to fine-tuned at 10K+ completions)
@@ -58,11 +58,24 @@ class DependencyType(str, Enum):
     SOFT = "soft"    # Preferred ordering — can be violated if needed for scheduling
 
 class TaskStatus(str, Enum):
+    """Execution-level status, managed by Layer D.
+    Note: Layer D defines a unified TaskExecutionState that merges TaskMatchState + TaskStatus
+    plus additional execution substates (PAUSED, EVALUATING, RETRYING, etc.).
+    TaskStatus and TaskMatchState are the Layer B/C view; TaskExecutionState is the Layer D runtime view.
+    """
     PENDING = "pending"          # Not yet started
     IN_PROGRESS = "in_progress"  # Currently being executed
     COMPLETE = "complete"        # Finished successfully
     FAILED = "failed"            # Failed (may trigger replan)
     SKIPPED = "skipped"          # Skipped due to replanning
+
+class TaskMatchState(str, Enum):
+    """Task-level matching states, managed by Layer C. See SPEC-LAYER-C Section 12."""
+    PENDING = "pending"          # Not yet ready for matching
+    READY = "ready"              # Dependencies resolved, ready for matching
+    MATCHING = "matching"        # Layer C matching pipeline in progress
+    MATCHED = "matched"          # Candidates found, awaiting assignment/negotiation
+    ASSIGNED = "assigned"        # Provider assigned, ready for execution
 
 class ExecutionPlanStatus(str, Enum):
     PENDING_APPROVAL = "pending_approval"  # Awaiting buyer review (autonomy 1 & 2)
@@ -133,6 +146,9 @@ class TaskNode(BaseModel):
     estimated_cost: CostEstimate
     confidence: float                            # 0.0-1.0 planner's confidence this task is well-specified
     status: TaskStatus = TaskStatus.PENDING
+    match_state: TaskMatchState = TaskMatchState.PENDING  # Set by Layer C matching pipeline
+    assigned_provider_id: str | None = None      # Set by Layer C when task is ASSIGNED
+    assigned_capability_card_id: str | None = None  # Capability card used for assignment
     acceptance_criteria_ids: list[str] = []      # IDs of contract acceptance criteria this task contributes to
     metadata: dict[str, Any] = {}
 
@@ -576,7 +592,7 @@ When decomposition fails critically:
 - Based on buyer preference (autonomy level):
   - Autonomy 1-2: Buyer is notified and asked how to proceed
   - Autonomy 3-4: System may retry, attempt with simplified parameters, or notify buyer
-- If the failure requires changes to the outcome or major contract renegotiation, the contract transitions back to a pre-ACTIVE state (NEGOTIATION or REQUIREMENTS). This transition goes through the governance layer.
+- If the failure requires changes to the outcome or major contract renegotiation, the contract transitions back to REQUIREMENTS state. This transition goes through the governance layer.
 
 ### 10.3 Replan Failures
 
