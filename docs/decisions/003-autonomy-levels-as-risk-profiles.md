@@ -1,8 +1,8 @@
 # ADR-003: Autonomy as User-Configurable Risk Profile
 
 **Date:** 2026-03-17
-**Status:** Accepted (replaces 2026-03-16 version)
-**Participants:** Andrew (founder), Claude (AI collaborator)
+**Status:** Accepted (updated 2026-03-28)
+**Participants:** Peeyush (founder), Claude (AI collaborator)
 
 ## Context
 
@@ -65,11 +65,11 @@ Delegation chains are tracked in handoff records — every handoff notes who aut
 
 Autonomy gates are specified in Layer D (Execution, Evaluation, and Handoff). Every state transition in the contract lifecycle has a defined gate check: does this transition require human approval given the current autonomy setting and risk profile? If yes, the contract pauses and emits an approval request. If no, it advances and emits a notification.
 
-This is enforced at the protocol level, not in application code. Any AWP-compatible runtime must implement these gate checks — they are not optional features.
+This is enforced at the protocol level, not in application code. Any PLN-compatible runtime must implement these gate checks — they are not optional features.
 
 ## Rationale
 
-Andrew's key insight: *"We're building something similar to retirement/investment fund interfaces where the user chooses their risk profile and the system takes actions accordingly. We're doing the same, but with 'wealth' defined much more broadly — we're trying to help users grow their self-worth and net worth, not just their bank account."*
+Peeyush's key insight: *"We're building something similar to retirement/investment fund interfaces where the user chooses their risk profile and the system takes actions accordingly. We're doing the same, but with 'wealth' defined much more broadly — we're trying to help users grow their self-worth and net worth, not just their bank account."*
 
 This analogy is powerful because:
 1. **Users understand it** — risk profiles are a known UX pattern from fintech

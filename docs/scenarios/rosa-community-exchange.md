@@ -234,7 +234,7 @@ Same identity record. Same autonomy setting. Same state machine. Different sides
 
 Traditional marketplaces don't support this. On Fiverr, you're either a seller or a buyer — the interfaces and incentives are different. On Upwork, provider accounts and client accounts are separate experiences. Rosa would need to maintain two profiles, two reputations, two mental models.
 
-In AWP, Rosa is one participant with one Identity Record. Her Capability Card describes what she can do. Her contracts describe what she needs. The protocol doesn't care which side she's on — the state machine works the same way.
+In PLN, Rosa is one participant with one Identity Record. Her Capability Card describes what she can do. Her contracts describe what she needs. The protocol doesn't care which side she's on — the state machine works the same way.
 
 ---
 
@@ -248,7 +248,7 @@ The protocol handles it cleanly:
 - **$0 is a valid payment.** The contract completes, performance records update, reputation builds.
 - **Platform fee on $0:** $0. Aquarius takes 5% of nothing.
 
-Why would the platform support free work? Because Rosa's 31 free contracts built a trust profile that makes her valuable to the ecosystem. When she becomes a licensed social worker, her AWP reputation — 31 completed contracts, 97% completion, community-verified — will be worth something. And the clients she helped? They're now familiar with the platform. Some will become buyers of paid services. Some will become providers themselves.
+Why would the platform support free work? Because Rosa's 31 free contracts built a trust profile that makes her valuable to the ecosystem. When she becomes a licensed social worker, her PLN reputation — 31 completed contracts, 97% completion, community-verified — will be worth something. And the clients she helped? They're now familiar with the platform. Some will become buyers of paid services. Some will become providers themselves.
 
 Community-level adoption doesn't start with transactions. It starts with trust.
 

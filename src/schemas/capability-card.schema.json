@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://protocol.peopleaquarius.com/schemas/capability-card",
-  "title": "AWP Capability Card",
+  "title": "PLN Capability Card",
   "type": "object",
   "required": ["participant_id", "skills", "modalities", "confidence", "constraints", "availability", "pricing", "performance", "version"],
   "additionalProperties": false,

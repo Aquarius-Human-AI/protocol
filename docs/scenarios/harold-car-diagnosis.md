@@ -271,7 +271,7 @@ Harold's scenario demonstrates a pattern that no existing marketplace supports: 
 
 Traditional platforms require the service provider to manage their own profile, respond to messages, handle scheduling, and process payments. Harold can't do any of that. On Upwork or Fiverr, Harold's 45 years of expertise would be inaccessible.
 
-AWP's delegation chain makes it work:
+PLN's delegation chain makes it work:
 
 | Responsibility | Who Handles It | How |
 |---------------|---------------|-----|

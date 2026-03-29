@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://protocol.peopleaquarius.com/schemas/handoff-record",
-  "title": "AWP Handoff Record",
+  "title": "PLN Handoff Record",
   "type": "object",
   "required": ["id", "from", "to", "reason", "context_transferred", "context_lost", "delegation_chain", "timestamp"],
   "additionalProperties": false,

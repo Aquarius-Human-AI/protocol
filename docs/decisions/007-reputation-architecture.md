@@ -2,7 +2,7 @@
 
 **Date:** 2026-03-17
 **Status:** Accepted
-**Participants:** Andrew (founder), Claude (AI collaborator)
+**Participants:** Peeyush (founder), Claude (AI collaborator)
 
 ## Context
 
@@ -55,7 +55,7 @@ The initial prior for a new worker is set from the highest-confidence source ava
 - Platform adapter profile: weakly informative prior (moderate uncertainty, discounted per ADR-006)
 - Manual onboarding with verified credentials: moderately informative prior
 
-Each completed AWP job updates the posterior. The update weight is proportional to job complexity and evaluation confidence — a complex tax return with a high-confidence LLM evaluation updates the score more than a simple task with a borderline evaluation.
+Each completed PLN job updates the posterior. The update weight is proportional to job complexity and evaluation confidence — a complex tax return with a high-confidence LLM evaluation updates the score more than a simple task with a borderline evaluation.
 
 ### Exponential Decay
 
@@ -68,9 +68,9 @@ This means:
 
 ### Minimum Job Threshold
 
-A worker's score is not used for high-value routing until they have completed at least **5 AWP jobs**. Before that threshold, the routing algorithm treats them as a lower-confidence candidate and applies a handicap in the matching optimization. This prevents gaming by new entrants and ensures that high-stakes contracts are routed to workers with demonstrated track records.
+A worker's score is not used for high-value routing until they have completed at least **5 PLN jobs**. Before that threshold, the routing algorithm treats them as a lower-confidence candidate and applies a handicap in the matching optimization. This prevents gaming by new entrants and ensures that high-stakes contracts are routed to workers with demonstrated track records.
 
-Alex's scenario shows this in practice: her imported Upwork score of 0.78 is used for initial routing, but she isn't eligible for premium contract routing until she clears 5 AWP completions. After her first job completes (0.78 → 0.81), she is two jobs closer to the threshold where her actual AWP performance drives routing at full weight.
+Alex's scenario shows this in practice: her imported Upwork score of 0.78 is used for initial routing, but she isn't eligible for premium contract routing until she clears 5 PLN completions. After her first job completes (0.78 → 0.81), she is two jobs closer to the threshold where her actual PLN performance drives routing at full weight.
 
 ### Confidence Bands
 
@@ -88,8 +88,14 @@ Reputation scores are written back to the worker nodes in Layer C (Capability + 
 
 The graph database (Neo4j) that underlies Layer C stores both the worker nodes and the edges representing job history, evaluation outcomes, and reputation score evolution over time. This provenance graph is the most defensible part of the data asset — it captures not just the current score but the full trajectory of how each worker's performance has evolved.
 
+### Building Block: Hybrid Reputation Unit
+
+This architecture implements the **Hybrid Reputation Unit** — one of PLN's seven building blocks. The key innovation is scoring a human-AI composite as a single performant entity. Freelancer platforms score humans. AI benchmarks score models. Nobody scores the combination — one operator plus one AI workflow plus their joint performance on a specific task type within a decomposed job. The Bayesian scoring system tracks these composites per-skill, per-task-type, with confidence bands that tighten over time. This is a novel concept with no production analog to build on.
+
+The **Provenance Graph** building block is also rooted here — the cryptographically chained audit trail that records who did what, with what tools, at what quality, for every completed job.
+
 ## Rationale
 
 The investment fund analogy from ADR-003 applies here too. A good fund manager does not evaluate a portfolio position on a single quarter's performance. They look at track record, recent trend, consistency, and how the position behaves under different conditions. Bayesian scoring with decay implements exactly this logic for worker performance.
 
-The moat implications are significant. A competitor who launches a new labor marketplace starts with every worker at an uninformative prior. After three years of Aquarius routing data, our priors are calibrated against thousands of real job outcomes. That calibration cannot be purchased or reverse-engineered — it is earned job by job.
+The moat implications are significant. A competitor who launches a new labor marketplace starts with every worker at an uninformative prior. After three years of Aquarius routing data, our priors are calibrated against thousands of real job outcomes. That calibration cannot be purchased or reverse-engineered — it is earned job by job. This accumulated reputation data is part of what we call the "language of getting work done through others" — the defensible asset at the core of PLN.

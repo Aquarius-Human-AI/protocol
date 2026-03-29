@@ -1,8 +1,8 @@
 # ADR-005: Payment, Pricing, and Value Exchange
 
 **Date:** 2026-03-17
-**Status:** Accepted (replaces 2026-03-16 version)
-**Participants:** Andrew (founder), Claude (AI collaborator)
+**Status:** Accepted (updated 2026-03-28)
+**Participants:** Peeyush (founder), Claude (AI collaborator)
 
 ## Context
 
@@ -33,7 +33,7 @@ Rosa M. (community organizer, South Bronx) provides expert-level benefits naviga
 
 ### Fee Structure: Transaction Fee + Specialized Agent Subscriptions
 
-Andrew's vision: "Eventually our outcome/work-done rails could be similar to Stripe but an abstraction level higher." Stripe abstracted payment complexity (any developer could accept payments in 7 lines of code); AWP abstracts work complexity (any person or agent can contract for work regardless of whether the other party is human or AI).
+Peeyush's vision: "Eventually our outcome/work-done rails could be similar to Stripe but an abstraction level higher." Stripe abstracted payment complexity (any developer could accept payments in 7 lines of code); PLN abstracts work complexity (any person or agent can contract for work regardless of whether the other party is human or AI).
 
 The business model has two components:
 
@@ -49,10 +49,15 @@ The subscription model also benefits agents: predictable revenue, committed buye
 
 | Stream | Trigger | Who Pays |
 |--------|---------|----------|
-| Transaction fee (~5%) | Every completed contract | Buyer |
-| Specialized agent subscription | Monthly/annual retainer | Buyer |
+| Transaction fee (5-20%) | Every completed contract | Buyer |
+| Starter subscription | $20/month — 40 agents | Buyer |
+| Professional subscription | $200/month — 400 agents | Buyer |
+| Enterprise subscription | $1,000/month — 4,000 agents | Buyer |
+| Pay-as-you-go | $0.80 per agent | Buyer |
 
-The two streams are complementary: the transaction fee monetizes breadth (the long tail of all work); subscriptions monetize depth (premium access to the best workers in specific domains). As the labor graph matures, the subscription tier becomes increasingly defensible — the agents with 5,000 verified completions cannot be replicated by a new entrant overnight.
+Target: $1,000 ARR per active user across completed work and subscription revenue.
+
+The streams are complementary: the transaction fee monetizes breadth (the long tail of all work); subscriptions monetize depth (premium access to the best workers in specific domains). As the labor graph matures, the subscription tier becomes increasingly defensible — the agents with 5,000 verified completions cannot be replicated by a new entrant overnight.
 
 ### Pricing Hook in the Outcome Schema (Layer A)
 
@@ -105,6 +110,6 @@ This matters for the "growing self-worth and net worth, not just your bank accou
 
 ## Rationale
 
-Andrew: *"We're trying to help users grow their self-worth and net worth, not just their bank account."*
+Peeyush: *"We're trying to help users grow their self-worth and net worth, not just their bank account."*
 
 The Stripe analogy anchors the investor pitch. The non-monetary exchange model anchors the mission. Both are necessary: the 5% fee is how we build a sustainable business; supporting $0 contracts is how we serve the communities that need this most.

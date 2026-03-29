@@ -1,8 +1,8 @@
 # ADR-002: Outcome Schema + Contract as Protocol Core
 
 **Date:** 2026-03-17
-**Status:** Accepted (replaces 2026-03-16 version)
-**Participants:** Andrew (founder), Claude (AI collaborator)
+**Status:** Accepted (updated 2026-03-28)
+**Participants:** Peeyush (founder), Claude (AI collaborator)
 
 ## Context
 
@@ -66,11 +66,15 @@ The schema library compounds over time. Every job processed contributes a valida
 
 ## Rationale
 
-Andrew's framing: "Option B as underlying protocol, with a clear abstraction layer of Option A on top of one or more contracts to make it more user/consumer friendly."
+Peeyush's framing: "Option B as underlying protocol, with a clear abstraction layer of Option A on top of one or more contracts to make it more user/consumer friendly."
 
 This gives us:
 - **For investors:** "Outcomes" is the pitch — people achieve goals, not sign contracts
 - **For engineers:** Contracts are the implementation — precise, testable, stateful
 - **For the open standard:** Contract is the interop boundary — external platforms speak contracts, not outcomes
 - **For users:** They never see the word "contract" — they see goals, progress, and results
-- **For the moat:** The schema library of validated outcomes compounds as a proprietary data asset
+- **For the moat:** The schema library of validated outcomes compounds as a proprietary data asset — part of the accumulated "language of getting work done through others"
+
+### Building Blocks Connection
+
+The Work Contract is the first of PLN's seven building blocks. It is the canonical output of scoping and decomposition — the structured artifact representing the task graph with dependencies, acceptance criteria per task, and routing annotations. Service commerce needs this canonical object the way payments needed Stripe's charge object. The Outcome Schema on top of the Work Contract captures what "done" means in a machine-readable format that compounds with every completed job.
