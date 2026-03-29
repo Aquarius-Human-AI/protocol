@@ -77,7 +77,7 @@ Requirements
     └── cultural_fit: "experience with East African business community"
 ```
 
-Notice the constraint structure. "Cultural fit" isn't a checkbox on Upwork. AWP's matching system treats it as a first-class signal because it came directly from Ahmed's expressed needs and past negative experience.
+Notice the constraint structure. "Cultural fit" isn't a checkbox on Upwork. PLN's matching system treats it as a first-class signal because it came directly from Ahmed's expressed needs and past negative experience.
 
 ### State: MATCHING
 **Triggered by:** AI agent
@@ -237,7 +237,7 @@ Payment of $300 processed. Both parties' records updated:
 
 Traditional marketplaces would have shown Ahmed a search results page. He would have typed "tax preparer Minneapolis," received 200 results, and had no way to filter for Somali-speaking, halal-familiar, community-trusted accountants.
 
-AWP's matching treated Ahmed's language, cultural context, and past negative experience as first-class inputs — not afterthoughts. The community-verified trust signal (Somali Business Association) carried weight that no star rating could match.
+PLN's matching treated Ahmed's language, cultural context, and past negative experience as first-class inputs — not afterthoughts. The community-verified trust signal (Somali Business Association) carried weight that no star rating could match.
 
 The Facilitator autonomy level meant Ahmed stayed in control of every commitment while the AI handled the parts that would have been hardest for him: searching, evaluating, and structuring the engagement in clear terms.
 

@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://protocol.peopleaquarius.com/schemas/identity-record",
-  "title": "AWP Identity Record",
+  "title": "PLN Identity Record",
   "type": "object",
   "required": ["id", "type", "auth", "trust_level", "autonomy_setting", "delegation_chain", "preferences", "risk_profile"],
   "additionalProperties": false,

@@ -1,8 +1,8 @@
-# Aquarius Work Protocol — Claude Guidelines
+# Aquarius PLN — Claude Guidelines
 
 ## Overview
 
-Protocol definition repo for AWP — the operating system for agent-powered services.
+Protocol definition repo for PLN (Programmable Labor Network) — the scoping, decomposition, coordination, trust, and routing layer for the human + AI services economy.
 This is a TypeScript library, not a deployed service.
 
 ## Commands
@@ -16,6 +16,8 @@ This is a TypeScript library, not a deployed service.
 ## Structure
 
 - `docs/` — Specs, ADRs, scenarios, investor narrative
+- `docs/specs/` — Layer implementation specs (A through F + Governance)
+- `docs/pln-memo.md` — Investor memo (source of truth for narrative)
 - `src/schemas/` — JSON Schema definitions for protocol entities
 - `src/types/` — TypeScript type definitions
 - `src/state-machine/` — Contract state machine with autonomy gates
@@ -23,6 +25,8 @@ This is a TypeScript library, not a deployed service.
 
 ## Key Docs
 
-- Design spec: `docs/specs/2026-03-16-awp-protocol-design.md`
+- Investor memo: `docs/pln-memo.md`
+- Layer specs: `docs/specs/SPEC-LAYER-*.md`
 - Decision records: `docs/decisions/`
 - Persona scenarios: `docs/scenarios/`
+- Deferred items: `docs/specs/DEFERRED.md`

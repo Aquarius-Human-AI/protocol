@@ -1,7 +1,7 @@
 {
   "name": "@aquarius/protocol",
   "version": "0.1.0",
-  "description": "Aquarius Work Protocol — the operating system for agent-powered services",
+  "description": "Aquarius PLN — the Programmable Labor Network for the human + AI services economy",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

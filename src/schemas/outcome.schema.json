@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://protocol.peopleaquarius.com/schemas/outcome",
-  "title": "AWP Outcome",
+  "title": "PLN Outcome",
   "type": "object",
   "required": ["id", "owner", "description", "contracts", "status", "progress"],
   "additionalProperties": false,

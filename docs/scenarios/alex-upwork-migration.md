@@ -8,7 +8,7 @@
 
 Alex is a successful freelance copywriter who has built a strong reputation on Upwork — 47 completed contracts, a 98% satisfaction rate, and a Top Rated badge. But Upwork's 20% fee on the first $500 of each contract is eating into her margins. She's heard about Aquarius and wants to bring her reputation with her, not start from zero.
 
-This scenario shows the provider side of the protocol — how Alex's Upwork track record becomes an AWP Capability Card, how confidence bootstraps for new participants, and what her first contract looks like from the other side of the state machine.
+This scenario shows the provider side of the protocol — how Alex's Upwork track record becomes an PLN Capability Card, how confidence bootstraps for new participants, and what her first contract looks like from the other side of the state machine.
 
 ---
 
@@ -39,7 +39,7 @@ Alex chose Facilitator because she wants to review every client before accepting
 
 ## Building the Capability Card from Upwork
 
-When Alex connected her Upwork account, the platform adapter imported her professional history into an AWP Capability Card.
+When Alex connected her Upwork account, the platform adapter imported her professional history into an PLN Capability Card.
 
 ### What the Upwork Adapter Extracted
 
@@ -86,13 +86,13 @@ Capability Card
 
 ### Why Confidence is 0.78, Not 0.98
 
-Alex's Upwork success rate is 98%. But her AWP confidence score is 0.78. This is intentional and important.
+Alex's Upwork success rate is 98%. But her PLN confidence score is 0.78. This is intentional and important.
 
-**Confidence is platform-adjusted.** AWP applies a discount to imported scores because:
+**Confidence is platform-adjusted.** PLN applies a discount to imported scores because:
 
-1. **Platform context differs.** Upwork's rating system, client base, and dispute resolution are different from AWP's. A 98% on Upwork doesn't mean 98% on AWP.
-2. **No AWP track record yet.** Alex has never completed a contract on this platform. Imported scores are evidence, not proof.
-3. **Confidence earns its way up.** After Alex completes her first few AWP contracts successfully, her confidence will rise. The imported score sets a strong starting point — a brand-new provider without imports starts at 0.50.
+1. **Platform context differs.** Upwork's rating system, client base, and dispute resolution are different from PLN's. A 98% on Upwork doesn't mean 98% on PLN.
+2. **No PLN track record yet.** Alex has never completed a contract on this platform. Imported scores are evidence, not proof.
+3. **Confidence earns its way up.** After Alex completes her first few PLN contracts successfully, her confidence will rise. The imported score sets a strong starting point — a brand-new provider without imports starts at 0.50.
 
 The formula: `base_confidence = imported_score * platform_discount_factor`. For Upwork (a well-known, structured platform), the discount factor is 0.80. For less-structured platforms, it would be lower.
 
@@ -106,7 +106,7 @@ The formula: `base_confidence = imported_score * platform_discount_factor`. For 
 
 This is why Alex is here. The economics:
 
-| | Upwork | AWP |
+| | Upwork | PLN |
 |---|--------|-----|
 | Hourly rate | $75 | $75 |
 | Platform fee | 20% (first $500) / 10% / 5% | 5% flat |
@@ -148,7 +148,7 @@ Match Candidate (Alex)
 ├── confidence_score: 0.78
 ├── match_reasoning: "Expert website copywriter, 47 completed projects,
 │                     strong brand voice portfolio. Local to Austin."
-├── uncertainty_flags: ["New to platform — no AWP-native reviews yet"]
+├── uncertainty_flags: ["New to platform — no PLN-native reviews yet"]
 ├── estimated_price: "$675 (9 hours at $75/hr)"
 └── estimated_timeline: "10 business days"
 ```
@@ -220,7 +220,7 @@ Payment of $675 processed. Alex received $641.25 ($675 minus 5% platform fee).
 
 **Alex's Capability Card updated:**
 - contracts_completed: 48
-- confidence: 0.81 (up from 0.78 — one successful AWP-native contract)
+- confidence: 0.81 (up from 0.78 — one successful PLN-native contract)
 - completion_rate: maintained at 0.98
 
 Three more successful contracts and Alex's confidence will be above 0.90, putting her at the top of matching results for her categories.
@@ -229,7 +229,7 @@ Three more successful contracts and Alex's confidence will be above 0.90, puttin
 
 ## The Provider Experience
 
-Most marketplace documentation focuses on buyers. Here is what Alex's day-to-day looks like as a provider on AWP:
+Most marketplace documentation focuses on buyers. Here is what Alex's day-to-day looks like as a provider on PLN:
 
 **Pipeline view (what Alex sees):**
 - 2 active contracts (bakery copy, SaaS email campaign)

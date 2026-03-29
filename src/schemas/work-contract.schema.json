@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://protocol.peopleaquarius.com/schemas/work-contract",
-  "title": "AWP Work Contract",
+  "title": "PLN Work Contract",
   "type": "object",
   "required": ["id", "outcome_id", "participants", "requirements", "terms", "state", "state_history", "verification", "revision_count", "max_revisions"],
   "additionalProperties": false,

@@ -1,8 +1,8 @@
 # ADR-001: Why a Programmable Labor Network?
 
 **Date:** 2026-03-17
-**Status:** Accepted (replaces 2026-03-16 version)
-**Participants:** Andrew (founder), Claude (AI collaborator)
+**Status:** Accepted (updated 2026-03-28)
+**Participants:** Peeyush (founder), Claude (AI collaborator)
 
 ## Context
 
@@ -26,19 +26,21 @@ Beyond the internal architecture problem, this gap points to a larger market opp
 
 ## Decision
 
-Build a **Programmable Labor Network** — a system that discovers human and AI labor supply, profiles and tracks performance over time, and routes outcome-based work to the optimal blend of labor.
+Build a **Programmable Labor Network (PLN)** — the scoping, decomposition, coordination, trust, and routing layer for the human + AI services economy.
 
-The protocol primitives that govern identity, contracts, execution, capability, and autonomy across the network are collectively referred to as the **Aquarius Work Protocol (AWP)** — the operating system for agent-powered services.
+PLN discovers human and AI labor supply, profiles and tracks performance over time, and routes outcome-based work to the optimal blend of labor. The system learns the language of getting work done through others — scoping patterns, decomposition templates, routing intelligence, handoff logic, and evaluation calibration.
 
-The moat is not the software. It is the **labor graph**: the accumulated reputation, capability, and performance data across every worker node. Every job processed makes the network smarter at routing. This compounds over time in a way that is expensive to replicate.
+The moat is not the software. It is the **accumulated language of getting work done**: the labor graph of reputation, capability, and performance data across every worker node. Every completed job deposits operational memory that makes the system smarter, stickier, and harder to replicate. Data network effect, not scale effect.
+
+PLN is implemented through seven building blocks: **Work Contract**, **Autonomy Gates**, **Hybrid Reputation Unit**, **Per-Task Matching**, **Demand-Driven Supply Discovery**, **Provenance Graph**, and **Handoff Protocol**.
 
 ## Why Now
 
-1. **Investor pitch (highest priority):** We need seed funding. A well-articulated protocol positions Aquarius as infrastructure, not just another marketplace app. "Operating system for agent-powered services" is the pitch. The moat narrative — labor graph as compounding data asset — is the differentiator that separates this from "another Upwork."
+1. **Investor pitch (highest priority):** We need seed funding. A well-articulated protocol positions Aquarius as infrastructure, not just another marketplace app. "The coordination layer for the human + AI services economy" is the pitch. The moat narrative — accumulated language of getting work done as compounding data asset — is the differentiator.
 
-2. **Internal architecture:** The protocol becomes the actual roadmap for how we refactor and unify the backend, AquaBot, and frontend systems. Building this rigorously now prevents the implicit contracts between systems from calcifying into technical debt.
+2. **Internal architecture:** The protocol becomes the actual roadmap for how we build and unify the backend and frontend systems. Building this rigorously now prevents implicit contracts between systems from calcifying into technical debt.
 
-3. **Open standard ambition:** If the protocol is good enough, it becomes adoptable by third parties — the "HTTP of agent-powered work." External platforms (Fiverr, Upwork, task-specific AI agents) can speak AWP contracts without understanding Aquarius internals.
+3. **Open standard ambition:** If the protocol is good enough, it becomes adoptable by third parties — the "HTTP of agent-powered work." External platforms (Fiverr, Upwork, task-specific AI agents) can speak PLN contracts without understanding Aquarius internals.
 
 ## What This Is Not
 

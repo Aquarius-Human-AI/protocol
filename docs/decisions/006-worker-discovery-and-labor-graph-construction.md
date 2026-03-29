@@ -2,7 +2,7 @@
 
 **Date:** 2026-03-17
 **Status:** Accepted
-**Participants:** Andrew (founder), Claude (AI collaborator)
+**Participants:** Peeyush (founder), Claude (AI collaborator)
 
 ## Context
 
@@ -38,8 +38,8 @@ A crawler pipeline continuously discovers workers by searching the web — profe
 The three mechanisms operate as layers of the same system:
 
 1. **Web crawl discovers** — any capable worker with a web presence can appear in the index. Confidence is low until verified.
-2. **Platform adapters enrich** — an Upwork profile or LinkedIn endorsement raises confidence on specific skills. Scores are discounted to reflect platform context difference (Alex's Upwork score of 0.98 becomes 0.78 on AWP — same underlying capability, but no AWP track record yet).
-3. **AWP completions verify** — every completed job on AWP is the highest-confidence signal. A worker who completes 5 jobs moves from candidate to verified; their score now drives high-value routing.
+2. **Platform adapters enrich** — an Upwork profile or LinkedIn endorsement raises confidence on specific skills. Scores are discounted to reflect platform context difference (Alex's Upwork score of 0.98 becomes 0.78 on PLN — same underlying capability, but no PLN track record yet).
+3. **PLN completions verify** — every completed job on PLN is the highest-confidence signal. A worker who completes 5 jobs moves from candidate to verified; their score now drives high-value routing.
 
 ### Confidence Discounting for Imported Profiles
 
@@ -49,14 +49,14 @@ When a worker profile is constructed from external sources, the confidence score
 |--------|--------------------|-----------|
 | Web crawl only | 0.3–0.5 | Unverified claim; no track record |
 | Platform adapter (e.g. Upwork) | 0.75–0.85 | Verified on another platform, but context differs |
-| AWP completions (< 5 jobs) | 0.80–0.90 | Direct signal but insufficient sample |
-| AWP completions (5+ jobs) | Score-driven | Full Bayesian reputation in effect (see ADR-007) |
+| PLN completions (< 5 jobs) | 0.80–0.90 | Direct signal but insufficient sample |
+| PLN completions (5+ jobs) | Score-driven | Full Bayesian reputation in effect (see ADR-007) |
 
-Alex's scenario illustrates the transition: her imported Upwork score starts at 0.78 on AWP. After her first AWP contract completes successfully, it ticks to 0.81. The system is honest about the uncertainty; the score improves as evidence accumulates.
+Alex's scenario illustrates the transition: her imported Upwork score starts at 0.78 on PLN. After her first PLN contract completes successfully, it ticks to 0.81. The system is honest about the uncertainty; the score improves as evidence accumulates.
 
 ### Stale Node Management
 
-Workers discovered by crawl who have never interacted with AWP are marked as `unverified`. Stale nodes are demoted in routing priority but never deleted — a worker who was active 18 months ago may become active again, and their historical profile is a valuable prior. Demotion is implemented as a recency weight in the routing algorithm, not a hard exclusion.
+Workers discovered by crawl who have never interacted with PLN are marked as `unverified`. Stale nodes are demoted in routing priority but never deleted — a worker who was active 18 months ago may become active again, and their historical profile is a valuable prior. Demotion is implemented as a recency weight in the routing algorithm, not a hard exclusion.
 
 ### Privacy and Consent
 
@@ -64,14 +64,14 @@ Discovered workers are not contacted, messaged, or billed without their consent.
 - A buyer's matching query returns them as a candidate
 - Aquarius extends an invitation to claim their profile and formally join
 
-Claiming a profile unlocks direct messaging, payout configuration, and the ability to manage availability. Unclaimed profiles can still be matched and contacted via disclosed outreach — the buyer sees the confidence score and knows the worker has not yet joined AWP.
+Claiming a profile unlocks direct messaging, payout configuration, and the ability to manage availability. Unclaimed profiles can still be matched and contacted via disclosed outreach — the buyer sees the confidence score and knows the worker has not yet joined PLN.
 
 ### Labor Graph as Moat
 
-This is why worker discovery is an architectural decision and not just an operational one. The labor graph — built through crawl, enriched by platform adapters, verified by AWP completions — is the compounding data moat described in ADR-004. A new entrant cannot replicate three years of routing data, reputation scores, and capability refinement by standing up a web crawler. The crawler is the starting mechanism; the accumulation is the asset.
+This is why worker discovery is an architectural decision and not just an operational one. The labor graph — built through crawl, enriched by platform adapters, verified by PLN completions — is the compounding data moat described in ADR-004. A new entrant cannot replicate three years of routing data, reputation scores, and capability refinement by standing up a web crawler. The crawler is the starting mechanism; the accumulation is the asset.
 
 ## Rationale
 
 Harold illustrates why web crawl matters. He is a master mechanic with 47 years of experience, providing rare diagnostic services for rural Wisconsin residents. He has no Upwork profile. He has never applied to a marketplace. He has a basic website his grandson set up. Without web crawl, he is invisible to the network. With it, he can be discovered, invited to claim his profile, and start accumulating reputation — even if he never touches the interface himself (Jake handles it).
 
-Rosa illustrates why confidence discounting matters. Her benefits navigation work happens through community organizations, word of mouth, and informal channels. There is no platform to import from. Her AWP profile starts from scratch, with $0 contracts counting as fully valid reputation-building completions. The moat compounds from the first job.
+Rosa illustrates why confidence discounting matters. Her benefits navigation work happens through community organizations, word of mouth, and informal channels. There is no platform to import from. Her PLN profile starts from scratch, with $0 contracts counting as fully valid reputation-building completions. The moat compounds from the first job.

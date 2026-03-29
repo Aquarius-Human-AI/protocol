@@ -1,8 +1,8 @@
 # ADR-004: Six-Layer Architecture with Moat/Execution Separation
 
 **Date:** 2026-03-17
-**Status:** Accepted (replaces 2026-03-16 version)
-**Participants:** Andrew (founder), Claude (AI collaborator)
+**Status:** Accepted (updated 2026-03-28)
+**Participants:** Peeyush (founder), Claude (AI collaborator)
 
 ## Context
 
@@ -60,6 +60,20 @@ This is the key architectural insight that separates a Programmable Labor Networ
 
 This split has strategic implications: investment in moat layers (A, C, E) compounds. Investment in execution/interface layers (B, D, F) depreciates. Architectural decisions that trade moat quality for execution convenience should be treated skeptically.
 
+### Building Blocks to Layer Mapping
+
+PLN's seven building blocks map to the six-layer architecture:
+
+| Building Block | Primary Layer | Description |
+|---------------|--------------|-------------|
+| Work Contract | A | Machine-readable work order with deterministic state machine |
+| Autonomy Gates | Governance (cross-cutting) | Risk-modified policy for proportional human control |
+| Hybrid Reputation Unit | E | Bayesian score tracking human-AI composites per-skill |
+| Per-Task Matching | C | Independent routing of each task node to optimal worker |
+| Demand-Driven Supply Discovery | C | Web crawling triggered by buyer demand |
+| Provenance Graph | E | Cryptographically chained receipt of who did what |
+| Handoff Protocol | D | Explicit record of every transition between participants |
+
 ### Infrastructure Requirements
 
 The six-layer architecture has specific infrastructure dependencies that must be planned for:
@@ -79,8 +93,8 @@ The six-layer architecture has specific infrastructure dependencies that must be
 
 The hybrid architecture naturally supports a phased build:
 
-- **Phase 1 (Pitch — complete):** Layer model + contract lifecycle narrative + persona scenarios. Investors see a coherent architecture. The TypeScript library and 59 schema/state-machine tests prove it's implementable.
-- **Phase 2 (Build):** State machine implementation on existing Firestore/AquaBot infrastructure. Start with Layers A and D (contract lifecycle + execution). Layer C (capability index) and Layer E (reputation) follow as the first jobs complete and generate data.
+- **Phase 1 (Pitch — complete):** Six-layer architecture + governance, implementation specs per layer, contract lifecycle narrative + persona scenarios, investor memo. The TypeScript library proves it's implementable.
+- **Phase 2 (Build):** Layer implementation on existing Aquarius infrastructure. Start with Layer A (outcome schema + work contract) and Governance (transition control). Layers B+C (decomposition + routing), D (execution), and E (reputation) follow. Layer F (control surface) last.
 - **Phase 3 (Open):** Formal layer specifications, adapter SDK for external platforms (Fiverr, Upwork, etc.). Layers A and C become the interop boundary.
 
 ## Rationale
@@ -89,7 +103,7 @@ This architecture gives us three things at once:
 
 1. **Investor narrative:** "A six-layer Programmable Labor Network, three layers of which form a compounding data moat" — comparable to how TCP/IP enabled the internet, but with an explicit explanation of where defensibility comes from.
 
-2. **Implementation path:** State machine on existing Firestore/AquaBot infrastructure — we can build Phase 2 without greenfielding. The state machine is already specified in the TypeScript library.
+2. **Implementation path:** State machine on existing Aquarius infrastructure — we can build Phase 2 without greenfielding. The state machine is already specified in the TypeScript library.
 
 3. **Open standard ambition:** The layers are the spec. The state machine is the reference implementation. External platforms implement Layer A (contracts) and optionally Layer C (capability cards) — they don't need to understand the full stack.
 
